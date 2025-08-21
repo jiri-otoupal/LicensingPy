@@ -1,22 +1,57 @@
-# 🔐 Offline Licensing System for Python
+# 🔐 LicensingPy - Professional Offline Licensing System
 
-A secure offline licensing solution using ECDSA signatures, hardware fingerprinting, and component-based security.
+[![PyPI version](https://badge.fury.io/py/licensingpy.svg)](https://badge.fury.io/py/licensingpy)
+[![Python Support](https://img.shields.io/pypi/pyversions/licensingpy.svg)](https://pypi.org/project/licensingpy/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+A professional, secure offline licensing solution with beautiful CLI, ECDSA signatures, and hardware fingerprinting.
 
 ## ✨ Features
 
-- 🔒 **ECDSA Digital Signatures** - Cryptographically secure license verification
-- 🖥️ **Hardware Fingerprinting** - Bind licenses to specific machines
-- 🧩 **Component-Based Licensing** - Separate licenses for different modules
-- 📁 **Secure Preseed System** - File-based secret management with hashing
-- 🌐 **Offline Operation** - No internet connection required
-- 🛡️ **Tamper Resistant** - Licenses cannot be modified or forged
-- ⚡ **Auto-Verification** - Automatic license discovery and validation
-- 🖱️ **CLI Tools** - Complete command-line interface
+- 🔒 **ECDSA P-256 Signatures** - Cryptographically secure license verification
+- 🖥️ **Hardware Fingerprinting** - Bind licenses to specific machines (MAC, disk, CPU, system, composite)
+- 🧩 **Component-Based Licensing** - Separate licenses for different modules/components
+- 🌱 **Secure Preseed System** - File-based secret management with SHA-256 hashing
+- 🎨 **Beautiful Rich CLI** - Colorful, interactive command-line interface with progress bars
+- 🐧 **Cross-Platform** - Windows, Linux, macOS with native fallbacks
+- 🌐 **Offline Operation** - No internet connection required for license operations
+- 🛡️ **Tamper Resistant** - Licenses cannot be modified, copied, or forged
+- ⚡ **Auto-Verification** - Automatic license discovery and batch validation
+- 📦 **Zero Dependencies** - Optional hardware detection libraries with native fallbacks
+- 🧪 **Comprehensive Tests** - 111+ test cases with high coverage
+- 📚 **Complete Documentation** - Detailed guides and API documentation
 
 ## 📦 Installation
 
+### Using pip (Recommended)
+
 ```bash
-pip install -r requirements.txt
+pip install licensingpy
+```
+
+### Using Poetry
+
+```bash
+poetry add licensingpy
+```
+
+### With Optional Hardware Detection
+
+For enhanced hardware detection capabilities:
+
+```bash
+pip install "licensingpy[hardware]"
+# or
+poetry add licensingpy -E hardware
+```
+
+### Development Installation
+
+```bash
+git clone https://github.com/licensingpy/licensingpy.git
+cd licensingpy
+poetry install --with dev,test
 ```
 
 ## 🚀 Quick Start Guide
@@ -26,7 +61,7 @@ pip install -r requirements.txt
 The preseed file contains secret content that secures your licenses:
 
 ```bash
-python -m licensing.cli generate-preseed --project-name "MyAwesomeApp" --description "Production preseed for MyApp" --output my_app_preseed.json
+licensingpy generate-preseed --project-name "MyAwesomeApp" --description "Production preseed for MyApp" --output my_app_preseed.json
 ```
 
 **Output:**
@@ -44,7 +79,7 @@ python -m licensing.cli generate-preseed --project-name "MyAwesomeApp" --descrip
 ### Step 2: Generate Cryptographic Keys
 
 ```bash
-python -m licensing.cli generate-keys --format json --output my_app_keys.json
+licensingpy generate-keys --format json --output my_app_keys.json
 ```
 
 **Output:**
@@ -60,7 +95,7 @@ python -m licensing.cli generate-keys --format json --output my_app_keys.json
 ### Step 3: Generate a License
 
 ```bash
-python -m licensing.cli generate-license --private-key my_app_keys.json --preseed-file my_app_preseed.json --app-name "MyAwesomeApp" --version "2.1.0" --component-name "CoreEngine" --customer "Acme Corporation" --expires "2025-12-31" --output customer_license.txt
+licensingpy generate-license --private-key my_app_keys.json --preseed-file my_app_preseed.json --app-name "MyAwesomeApp" --version "2.1.0" --component-name "CoreEngine" --customer "Acme Corporation" --expires "2025-12-31" --output customer_license.txt
 ```
 
 **Output:**
@@ -84,7 +119,7 @@ License Details:
 ### Step 4: Verify the License
 
 ```bash
-python -m licensing.cli verify-license --public-key my_app_keys.json --preseed-file my_app_preseed.json --license customer_license.txt --verbose
+licensingpy verify-license --public-key my_app_keys.json --preseed-file my_app_preseed.json --license customer_license.txt --verbose
 ```
 
 **Output:**
@@ -364,7 +399,7 @@ if __name__ == "__main__":
 
 ### Generate Preseed File
 ```bash
-python -m licensing.cli generate-preseed [OPTIONS]
+licensingpy generate-preseed [OPTIONS]
 
 Options:
   -o, --output PATH     Output file (default: preseed.json)
@@ -375,7 +410,7 @@ Options:
 
 ### Generate Keys
 ```bash
-python -m licensing.cli generate-keys [OPTIONS]
+licensingpy generate-keys [OPTIONS]
 
 Options:
   -o, --output PATH           Output file for keys
@@ -384,7 +419,7 @@ Options:
 
 ### Generate License
 ```bash
-python -m licensing.cli generate-license [OPTIONS]
+licensingpy generate-license [OPTIONS]
 
 Required:
   -k, --private-key PATH      Private key file
@@ -403,7 +438,7 @@ Options:
 
 ### Verify License
 ```bash
-python -m licensing.cli verify-license [OPTIONS]
+licensingpy verify-license [OPTIONS]
 
 Required:
   -k, --public-key PATH       Public key file
@@ -418,7 +453,7 @@ Options:
 
 ### Demo Workflow
 ```bash
-python -m licensing.cli demo
+licensingpy demo
 ```
 
 ## 📁 File Structure
@@ -465,13 +500,13 @@ your_project/
 **Hardware Mismatch:**
 ```bash
 # Skip hardware check for testing
-python -m licensing.cli verify-license --skip-hardware ...
+licensingpy verify-license --skip-hardware ...
 ```
 
 **License Expired:**
 ```bash
 # Check expiry date
-python -m licensing.cli verify-license --verbose ...
+licensingpy verify-license --verbose ...
 ```
 
 **Invalid Signature:**
@@ -492,7 +527,7 @@ python -m licensing.cli verify-license --verbose ...
 For issues and questions:
 1. Check this README for common solutions
 2. Review the example code above
-3. Test with the demo command: `python -m licensing.cli demo`
+3. Test with the demo command: `licensingpy demo`
 4. Verify your file structure and permissions
 
 ## 🎯 Example Project Structure

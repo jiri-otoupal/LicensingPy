@@ -1,0 +1,54 @@
+# Include important package files
+include README.md
+include LICENSE
+include CHANGELOG.md
+include pyproject.toml
+
+# Include documentation
+recursive-include docs *
+recursive-exclude docs/_build *
+
+# Include examples
+recursive-include examples *.py
+recursive-include examples *.txt
+recursive-exclude examples *.json
+recursive-exclude examples *_keys.*
+recursive-exclude examples *_preseed.*
+recursive-exclude examples license.txt
+recursive-exclude examples private_key.txt
+recursive-exclude examples public_key.txt
+
+# Include tests
+recursive-include tests *.py
+recursive-include tests *.ini
+recursive-include tests *.txt
+recursive-exclude tests __pycache__
+recursive-exclude tests *.pyc
+
+# Exclude development and build artifacts
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude .DS_Store
+global-exclude *.so
+global-exclude .git*
+global-exclude .pytest_cache
+global-exclude .mypy_cache
+global-exclude .tox
+global-exclude .coverage
+global-exclude htmlcov
+global-exclude *.egg-info
+
+# Exclude sensitive files
+global-exclude *_preseed.json
+global-exclude *_keys.json
+global-exclude *.lic
+global-exclude private_key.txt
+global-exclude public_key.txt
+global-exclude license.txt
+
+# Exclude temporary files
+global-exclude *.tmp
+global-exclude *.temp
+global-exclude *.bak
+global-exclude *.orig
+global-exclude *.log

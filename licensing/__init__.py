@@ -1,25 +1,90 @@
 """
-Offline Licensing System for Python
+🔐 LicensingPy - Secure Offline Licensing System
+================================================
 
-A secure offline licensing solution using ECDSA signatures and hardware fingerprinting.
+A professional, secure offline licensing solution using ECDSA signatures and hardware fingerprinting.
+
+Features:
+    • 🔒 ECDSA P-256 cryptographic signatures
+    • 🖥️  Hardware fingerprinting (MAC, disk, CPU, system, composite)
+    • 🌱 Secure preseed-based additional authentication
+    • 🎨 Beautiful Rich-powered CLI interface  
+    • 🐧 Cross-platform support (Windows, Linux, macOS)
+    • 📦 Zero external dependencies (with native fallbacks)
+    • 🧪 Comprehensive test suite
+    • 📚 Complete documentation
+
+Basic Usage:
+    >>> from licensing import LicenseGenerator, LicenseManager
+    >>> 
+    >>> # Generate key pair
+    >>> private_key, public_key = LicenseGenerator.generate_key_pair()
+    >>> 
+    >>> # Generate license
+    >>> generator = LicenseGenerator(private_key, "my-preseed")
+    >>> license_string = generator.generate_license(
+    ...     expiry_date="2025-12-31",
+    ...     fingerprint_type="composite"
+    ... )
+    >>> 
+    >>> # Verify license
+    >>> manager = LicenseManager(public_key, "my-preseed")
+    >>> license_data = manager.verify_license(license_string)
+    >>> print(f"License expires: {license_data['expiry']}")
+
+CLI Usage:
+    $ licensingpy generate-keys --format json --output keys.json
+    $ licensingpy generate-preseed --output preseed.json
+    $ licensingpy generate-license --private-key keys.json --preseed-file preseed.json
+    $ licensingpy verify-license --public-key keys.json --preseed-file preseed.json --license license.txt
+    $ licensingpy demo  # Interactive demonstration
+
+Author: LicensingPy Team
+License: MIT
+Homepage: https://github.com/licensingpy/licensingpy
 """
 
+# Core imports
 from .license_manager import LicenseManager
 from .license_generator import LicenseGenerator
 from .preseed_generator import PreseedGenerator
 from .hardware_fingerprint import HardwareFingerprint
-from .exceptions import LicenseError, LicenseExpiredError, LicenseInvalidError
+from .exceptions import LicenseError, LicenseExpiredError, LicenseInvalidError, HardwareMismatchError
 
+# Package metadata
 __version__ = "1.0.0"
+__title__ = "licensingpy"
+__description__ = "🔐 Secure offline licensing system with beautiful CLI, ECDSA signatures, and hardware fingerprinting"
+__author__ = "LicensingPy Team"
+__author_email__ = "licensing@example.com"
+__license__ = "MIT"
+__copyright__ = "Copyright 2025 LicensingPy Team"
+__url__ = "https://github.com/licensingpy/licensingpy"
+
+# Public API
 __all__ = [
+    # Core classes
     "LicenseManager",
-    "LicenseGenerator",
+    "LicenseGenerator", 
     "PreseedGenerator",
     "HardwareFingerprint",
+    
+    # Exceptions
     "LicenseError",
-    "LicenseExpiredError",
+    "LicenseExpiredError", 
     "LicenseInvalidError",
-    "auto_verify_licenses"
+    "HardwareMismatchError",
+    
+    # Utility functions
+    "auto_verify_licenses",
+    
+    # Package info
+    "__version__",
+    "__title__",
+    "__description__",
+    "__author__",
+    "__license__",
+    "__url__"
 ]
 
 def auto_verify_licenses(working_dir=None, check_hardware=True, check_expiry=True):
