@@ -41,7 +41,7 @@ CLI Usage:
 
 Author: LicensingPy Team
 License: MIT
-Homepage: https://github.com/licensingpy/licensingpy
+Homepage: https://github.com/jiri-otoupal/LicensingPy
 """
 
 # Core imports
@@ -59,7 +59,7 @@ __author__ = "LicensingPy Team"
 __author_email__ = "licensing@example.com"
 __license__ = "MIT"
 __copyright__ = "Copyright 2025 LicensingPy Team"
-__url__ = "https://github.com/licensingpy/licensingpy"
+__url__ = "https://github.com/jiri-otoupal/LicensingPy"
 
 # Public API
 __all__ = [

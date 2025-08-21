@@ -9,9 +9,9 @@ description = "🔐 Secure offline licensing system with beautiful CLI, ECDSA si
 authors = ["LicensingPy Team <licensing@example.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/licensingpy/licensingpy"
-repository = "https://github.com/licensingpy/licensingpy"
-documentation = "https://licensingpy.readthedocs.io"
+homepage = "https://github.com/jiri-otoupal/LicensingPy"
+repository = "https://github.com/jiri-otoupal/LicensingPy"
+documentation = "https://github.com/jiri-otoupal/LicensingPy"
 keywords = [
     "licensing",
     "security", 
@@ -75,10 +75,10 @@ licensingpy = "licensing.cli:cli"
 licensing = "licensing.cli:cli"
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/licensingpy/licensingpy/issues"
-"Changelog" = "https://github.com/licensingpy/licensingpy/blob/main/CHANGELOG.md"
-"Documentation" = "https://licensingpy.readthedocs.io"
-"Funding" = "https://github.com/sponsors/licensingpy"
+"Bug Tracker" = "https://github.com/jiri-otoupal/LicensingPy/issues"
+"Changelog" = "https://github.com/jiri-otoupal/LicensingPy/blob/main/CHANGELOG.md"
+"Documentation" = "https://github.com/jiri-otoupal/LicensingPy"
+"Funding" = "https://github.com/sponsors/jiri-otoupal"
 
 # Black configuration
 [tool.black]
