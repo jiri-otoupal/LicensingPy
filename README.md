@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/licensingpy.svg)](https://badge.fury.io/py/licensingpy)
 [![Python Support](https://img.shields.io/pypi/pyversions/licensingpy.svg)](https://pypi.org/project/licensingpy/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Downloads](https://pepy.tech/badge/licensingpy)](https://pepy.tech/project/licensingpy)
 
 A professional, secure offline licensing solution with beautiful CLI, ECDSA signatures, and hardware fingerprinting.
 
