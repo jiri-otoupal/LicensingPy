@@ -153,7 +153,7 @@ class TestCLI:
             ])
             
             assert result.exit_code == 0
-            assert 'License generated successfully' in result.output
+            assert 'License generated for current machine' in result.output
             assert os.path.exists(license_file)
             
             # Verify license file
@@ -351,4 +351,4 @@ class TestCLI:
         ])
         
         assert result.exit_code == 0
-        assert 'hardware information' in result.output.lower()
+        assert 'hardware analysis completed' in result.output.lower()
