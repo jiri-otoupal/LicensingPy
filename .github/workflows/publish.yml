@@ -1,0 +1,141 @@
+name: Upload LicensingPy Package to PyPI
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'master'
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: latest
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Get package version from pyproject.toml
+        id: get_version
+        run: |
+          PACKAGE_VERSION=$(poetry version --short)
+          echo "Package version: $PACKAGE_VERSION"
+          echo "package_version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if package version exists on PyPI
+        id: check_version
+        run: |
+          PACKAGE_VERSION="${{ steps.get_version.outputs.package_version }}"
+          echo "Checking if version $PACKAGE_VERSION exists on PyPI for licensingpy"
+          
+          # Check if the version exists on PyPI
+          if curl -s -f "https://pypi.org/pypi/licensingpy/$PACKAGE_VERSION/json" > /dev/null 2>&1; then
+            echo "❌ Version $PACKAGE_VERSION already exists on PyPI. Skipping deployment."
+            echo "version_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Version $PACKAGE_VERSION not found on PyPI. Proceeding with deployment."
+            echo "version_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        if: steps.check_version.outputs.version_exists == 'false'
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.check_version.outputs.version_exists == 'false' && steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+
+      - name: Install project
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: poetry install --no-interaction
+
+      - name: Run tests
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: |
+          poetry run pytest tests/ -v --cov=licensing --cov-report=term-missing
+          echo "✅ All tests passed!"
+
+      - name: Build package
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: |
+          echo "🔨 Building package..."
+          poetry build
+          echo "✅ Package built successfully!"
+          ls -la dist/
+
+      - name: Verify package contents
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: |
+          echo "📦 Verifying package contents..."
+          echo "Built files:"
+          ls -la dist/
+          echo ""
+          echo "Package info:"
+          poetry run pip show licensingpy || echo "Package not installed yet"
+
+      - name: Publish package to PyPI
+        if: steps.check_version.outputs.version_exists == 'false'
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          echo "🚀 Publishing to PyPI..."
+          poetry publish --build
+          echo "🎉 Package published successfully to PyPI!"
+
+      - name: Verify PyPI publication
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: |
+          echo "🔍 Verifying publication on PyPI..."
+          PACKAGE_VERSION="${{ steps.get_version.outputs.package_version }}"
+          
+          # Wait a bit for PyPI to update
+          sleep 30
+          
+          # Check if the package is now available
+          if curl -s -f "https://pypi.org/pypi/licensingpy/$PACKAGE_VERSION/json" > /dev/null 2>&1; then
+            echo "✅ Package version $PACKAGE_VERSION successfully published to PyPI!"
+            echo "📋 Package URL: https://pypi.org/project/licensingpy/$PACKAGE_VERSION/"
+          else
+            echo "⚠️  Package may still be propagating to PyPI. Check manually."
+          fi
+
+      - name: Create GitHub Release Summary
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: |
+          PACKAGE_VERSION="${{ steps.get_version.outputs.package_version }}"
+          echo "## 🎉 LicensingPy v$PACKAGE_VERSION Published!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Installation" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "pip install licensingpy==$PACKAGE_VERSION" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Links" >> $GITHUB_STEP_SUMMARY
+          echo "- [PyPI Package](https://pypi.org/project/licensingpy/$PACKAGE_VERSION/)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Documentation](https://licensingpy.readthedocs.io)" >> $GITHUB_STEP_SUMMARY
+          echo "- [GitHub Repository](https://github.com/licensingpy/licensingpy)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✨ Quick Start" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "licensingpy demo" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
