@@ -1,0 +1,11 @@
+# Core dependencies
+pycryptodome>=3.19.0
+click>=8.0.0
+
+# Hardware fingerprinting dependencies (optional but recommended)
+# These provide better hardware detection but the system will fallback to native methods
+netifaces>=0.11.0      # Cross-platform network interface detection
+psutil>=5.9.0          # Cross-platform system and process utilities
+
+# CLI enhancement
+rich>=14.1.0           # Rich terminal output

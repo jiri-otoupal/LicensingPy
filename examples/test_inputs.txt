@@ -1,0 +1,8 @@
+my-secret-preseed-2024
+30
+5
+TestApp
+1.0
+Test Customer
+CoreModule
+
