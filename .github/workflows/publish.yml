@@ -75,6 +75,13 @@ jobs:
           poetry run pytest tests/ -v --cov=licensing --cov-report=term-missing
           echo "✅ All tests passed!"
 
+      - name: Clean dist directory
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: |
+          echo "🧹 Cleaning dist directory..."
+          rm -rf dist/
+          mkdir -p dist/
+
       - name: Build package
         if: steps.check_version.outputs.version_exists == 'false'
         run: |
@@ -99,7 +106,7 @@ jobs:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           echo "🚀 Publishing to PyPI..."
-          poetry publish --build
+          poetry publish
           echo "🎉 Package published successfully to PyPI!"
 
       - name: Verify PyPI publication
