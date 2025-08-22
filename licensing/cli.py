@@ -58,7 +58,7 @@ def print_header(title: str, subtitle: str = None):
 
 
 @click.group()
-@click.version_option(version="1.0.0")
+@click.version_option(version="1.0.1")
 def cli():
     """
     🔐 Offline Licensing System CLI
@@ -769,7 +769,7 @@ def demo():
             license_string = generator.generate_license(
                 expiry_date=expiry_date,
                 fingerprint_type="composite",
-                additional_data={"app_name": "DemoApp", "app_version": "1.0.0"},
+                additional_data={"app_name": "DemoApp", "app_version": __version__},
                 component_name="DemoComponent"
             )
             progress.update(step_task, completed=True)

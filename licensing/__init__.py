@@ -55,7 +55,7 @@ from .hardware_fingerprint import HardwareFingerprint
 from .exceptions import LicenseError, LicenseExpiredError, LicenseInvalidError, HardwareMismatchError
 
 # Package metadata
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __title__ = "licensingpy"
 __description__ = "🔐 Secure offline licensing system with beautiful CLI, ECDSA signatures, and hardware fingerprinting"
 __author__ = "LicensingPy Team"
