@@ -34,10 +34,13 @@ Basic Usage:
 
 CLI Usage:
     $ licensingpy generate-keys --format json --output keys.json
-    $ licensingpy generate-preseed --output preseed.json
+    $ licensingpy generate-preseed --output preseed.json  # For license generation only
     $ licensingpy generate-license --private-key keys.json --preseed-file preseed.json
     $ licensingpy verify-license --public-key keys.json --preseed-file preseed.json --license license.txt
     $ licensingpy demo  # Interactive demonstration
+    
+Note: Preseed files are used for license generation via CLI. For production code verification, 
+use hardcoded preseed strings instead of loading from files for security.
 
 Author: LicensingPy Team
 License: MIT
@@ -76,6 +79,7 @@ __all__ = [
     "HardwareMismatchError",
     
     # Utility functions
+    "verify_license_with_preseed",
     "auto_verify_licenses",
     
     # Package info
@@ -86,6 +90,47 @@ __all__ = [
     "__license__",
     "__url__"
 ]
+
+def verify_license_with_preseed(license_string, public_key, preseed, check_hardware=True, check_expiry=True):
+    """
+    Convenience function to verify a license with a hardcoded preseed string.
+    
+    This is the recommended approach for production applications where you want to
+    ensure only licenses created with your specific preseed can be verified.
+    The preseed should be hardcoded in your application, not loaded from a file.
+    
+    Args:
+        license_string: The license string to verify
+        public_key: Base64 encoded public key for verification
+        preseed: Your secret preseed string (hardcoded, not from file)
+        check_hardware: Whether to verify hardware fingerprint (default: True)
+        check_expiry: Whether to check license expiry (default: True)
+        
+    Returns:
+        Dictionary containing license information if valid
+        
+    Raises:
+        LicenseInvalidError: If license is invalid or corrupted
+        LicenseExpiredError: If license has expired
+        HardwareMismatchError: If hardware doesn't match
+        
+    Example:
+        >>> from licensing import verify_license_with_preseed
+        >>> 
+        >>> # Your application's hardcoded credentials
+        >>> PUBLIC_KEY = "LS0tLS1CRUdJTi..."  # Your public key
+        >>> APP_PRESEED = "my-secret-app-preseed-2024"  # Your secret preseed
+        >>> 
+        >>> # Verify a license
+        >>> license_data = verify_license_with_preseed(
+        ...     license_string=user_license,
+        ...     public_key=PUBLIC_KEY,
+        ...     preseed=APP_PRESEED
+        ... )
+        >>> print(f"License expires: {license_data['expiry']}")
+    """
+    manager = LicenseManager(public_key, preseed)
+    return manager.verify_license(license_string, check_hardware, check_expiry)
 
 def auto_verify_licenses(working_dir=None, check_hardware=True, check_expiry=True):
     """

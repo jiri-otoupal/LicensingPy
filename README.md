@@ -138,33 +138,25 @@ LICENSE IS VALID AND ACTIVE
 
 ### Basic License Verification
 
+> **🔐 Security Note**: For production applications, always hardcode your preseed string instead of loading it from a file. This ensures only licenses created with your specific preseed can be verified by your application.
+
 ```python
-from licensing import LicenseManager, PreseedGenerator
+from licensing import verify_license_with_preseed, LicenseManager
 
-# Load your keys and preseed
-def load_app_credentials():
-    """Load your app's licensing credentials."""
-    import json
-    
-    # Load public key
-    with open('my_app_keys.json', 'r') as f:
-        keys = json.load(f)
-        public_key = keys['public_key']
-    
-    # Load and hash preseed
-    preseed_hash = PreseedGenerator.load_preseed_from_file('my_app_preseed.json')
-    
-    return public_key, preseed_hash
+# RECOMMENDED: Use hardcoded credentials (most secure)
+# Your application's secret credentials (hardcode these, don't load from files)
+PUBLIC_KEY = "LS0tLS1CRUdJTi..."  # Your actual public key here
+APP_PRESEED = "my-secret-app-preseed-2024"  # Your secret preseed string
 
-# Verify a single license
 def verify_license(license_string):
-    """Verify a license string."""
+    """Verify a license string using hardcoded preseed."""
     try:
-        public_key, preseed_hash = load_app_credentials()
-        manager = LicenseManager(public_key, preseed_hash)
-        
-        # Verify the license
-        license_data = manager.verify_license(license_string)
+        # Use the convenience function with hardcoded preseed
+        license_data = verify_license_with_preseed(
+            license_string=license_string,
+            public_key=PUBLIC_KEY,
+            preseed=APP_PRESEED
+        )
         
         print("✅ License is valid!")
         print(f"App: {license_data.get('app_name')}")
@@ -177,6 +169,12 @@ def verify_license(license_string):
     except Exception as e:
         print(f"❌ License verification failed: {e}")
         return False
+
+# Alternative: Using LicenseManager directly
+def verify_license_direct(license_string):
+    """Verify a license using LicenseManager directly."""
+    manager = LicenseManager(PUBLIC_KEY, APP_PRESEED)
+    return manager.verify_license(license_string)
 
 # Example usage
 if __name__ == "__main__":
@@ -233,20 +231,16 @@ if __name__ == "__main__":
 ### Component-Specific License Checking
 
 ```python
-from licensing import LicenseManager, PreseedGenerator
+from licensing import LicenseManager
 
 class ComponentLicenseManager:
     """Manage licenses for different application components."""
     
-    def __init__(self, public_key_file, preseed_file):
-        # Load credentials
-        import json
-        with open(public_key_file, 'r') as f:
-            keys = json.load(f)
-            self.public_key = keys['public_key']
-        
-        self.preseed_hash = PreseedGenerator.load_preseed_from_file(preseed_file)
-        self.manager = LicenseManager(self.public_key, self.preseed_hash)
+    def __init__(self, public_key, preseed):
+        # Use hardcoded credentials for security
+        self.public_key = public_key
+        self.preseed = preseed
+        self.manager = LicenseManager(self.public_key, self.preseed)
         
         # Cache for verified licenses
         self.verified_components = {}
@@ -292,8 +286,10 @@ class ComponentLicenseManager:
             return wrapper
         return decorator
 
-# Example usage
-license_manager = ComponentLicenseManager('my_app_keys.json', 'my_app_preseed.json')
+# Example usage with hardcoded credentials
+PUBLIC_KEY = "LS0tLS1CRUdJTi..."  # Your actual public key
+APP_PRESEED = "my-secret-app-preseed-2024"  # Your secret preseed
+license_manager = ComponentLicenseManager(PUBLIC_KEY, APP_PRESEED)
 
 @license_manager.require_license('DatabaseEngine')
 def access_database():
@@ -318,21 +314,19 @@ except PermissionError as e:
 ### Advanced License Validation
 
 ```python
-from licensing import LicenseManager, PreseedGenerator
+from licensing import LicenseManager
 from datetime import datetime, timedelta
 
-def advanced_license_check(license_file, preseed_file, public_key_file):
+# Hardcoded credentials for security
+PUBLIC_KEY = "LS0tLS1CRUdJTi..."  # Your actual public key
+APP_PRESEED = "my-secret-app-preseed-2024"  # Your secret preseed
+
+def advanced_license_check(license_file):
     """Advanced license validation with detailed reporting."""
     
     try:
-        # Load credentials
-        import json
-        with open(public_key_file, 'r') as f:
-            keys = json.load(f)
-            public_key = keys['public_key']
-        
-        preseed_hash = PreseedGenerator.load_preseed_from_file(preseed_file)
-        manager = LicenseManager(public_key, preseed_hash)
+        # Use hardcoded credentials
+        manager = LicenseManager(PUBLIC_KEY, APP_PRESEED)
         
         # Load license
         with open(license_file, 'r') as f:
@@ -534,18 +528,17 @@ For issues and questions:
 
 ```python
 # main.py - Your application entry point
-from licensing import LicenseManager, PreseedGenerator
+from licensing import LicenseManager
+
+# Hardcoded credentials (most secure approach)
+PUBLIC_KEY = "LS0tLS1CRUdJTi..."  # Your actual public key
+APP_PRESEED = "my-secret-app-preseed-2024"  # Your secret preseed
 
 def startup_license_check():
     """Check license before starting application."""
     try:
-        # Load credentials
-        import json
-        with open('app_keys.json', 'r') as f:
-            public_key = json.load(f)['public_key']
-        
-        preseed_hash = PreseedGenerator.load_preseed_from_file('app_preseed.json')
-        manager = LicenseManager(public_key, preseed_hash)
+        # Use hardcoded credentials for security
+        manager = LicenseManager(PUBLIC_KEY, APP_PRESEED)
         
         # Verify license
         with open('license.txt', 'r') as f:
